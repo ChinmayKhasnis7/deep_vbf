@@ -41,14 +41,14 @@ class BayesFilter():
                 prev_size = args.state_dim
             else:
                 prev_size = args.extractor_size[i-1]
-            self.extractor_w.append(tf.get_variable("extractor_w"+str(i), [prev_size, args.extractor_size[i]], 
+            self.extractor_w.append(tf.Variable("extractor_w"+str(i), [prev_size, args.extractor_size[i]], 
                                                 regularizer=tf.contrib.layers.l2_regularizer(args.reg_weight)))
-            self.extractor_b.append(tf.get_variable("extractor_b"+str(i), [args.extractor_size[i]]))
+            self.extractor_b.append(tf.Variable("extractor_b"+str(i), [args.extractor_size[i]]))
 
         # Last set of weights to map to output
-        self.extractor_w.append(tf.get_variable("extractor_w_end", [args.extractor_size[-1], args.code_dim], 
+        self.extractor_w.append(tf.Variable("extractor_w_end", [args.extractor_size[-1], args.code_dim], 
                                                 regularizer=tf.contrib.layers.l2_regularizer(args.reg_weight)))
-        self.extractor_b.append(tf.get_variable("extractor_b_end", [args.code_dim]))
+        self.extractor_b.append(tf.Variable("extractor_b_end", [args.code_dim]))
 
     # Function to run inputs through extractor
     def _get_extractor_output(self, args, states):
@@ -108,11 +108,11 @@ class BayesFilter():
 
     # Initialize potential transition matrices
     def _create_transition_matrices(self, args):
-        self.A_matrices = tf.get_variable("A_matrices", [args.num_matrices, args.code_dim, args.code_dim], 
+        self.A_matrices = tf.Variable("A_matrices", [args.num_matrices, args.code_dim, args.code_dim], 
                                             regularizer=tf.contrib.layers.l2_regularizer(args.reg_weight))
-        self.B_matrices = tf.get_variable("B_matrices", [args.num_matrices, args.action_dim, args.code_dim], 
+        self.B_matrices = tf.Variable("B_matrices", [args.num_matrices, args.action_dim, args.code_dim], 
                                             regularizer=tf.contrib.layers.l2_regularizer(args.reg_weight))
-        self.C_matrices = tf.get_variable("C_matrices", [args.num_matrices, args.noise_dim, args.code_dim], 
+        self.C_matrices = tf.Variable("C_matrices", [args.num_matrices, args.noise_dim, args.code_dim], 
                                             regularizer=tf.contrib.layers.l2_regularizer(args.reg_weight))
 
     # Create parameters to comprise weight network
@@ -121,14 +121,14 @@ class BayesFilter():
         self.weight_b = []
 
         # Have single hidden layer and fully connected to output
-        self.weight_w.append(tf.get_variable("weight_w1", [args.code_dim+args.action_dim, args.transform_size], 
+        self.weight_w.append(tf.Variable("weight_w1", [args.code_dim+args.action_dim, args.transform_size], 
                                             regularizer=tf.contrib.layers.l2_regularizer(args.reg_weight)))
-        self.weight_w.append(tf.get_variable("weight_w2", [args.transform_size, args.num_matrices], 
+        self.weight_w.append(tf.Variable("weight_w2", [args.transform_size, args.num_matrices], 
                                             regularizer=tf.contrib.layers.l2_regularizer(args.reg_weight)))
 
-        self.weight_b.append(tf.get_variable("weight_b1", [args.transform_size], 
+        self.weight_b.append(tf.Variable("weight_b1", [args.transform_size], 
                                             regularizer=tf.contrib.layers.l2_regularizer(args.reg_weight)))
-        self.weight_b.append(tf.get_variable("weight_b2", [args.num_matrices], 
+        self.weight_b.append(tf.Variable("weight_b2", [args.num_matrices], 
                                             regularizer=tf.contrib.layers.l2_regularizer(args.reg_weight)))
 
     # Create parameters to comprise inference network
@@ -142,14 +142,14 @@ class BayesFilter():
                 prev_size = args.feature_dim+args.code_dim+args.action_dim
             else:
                 prev_size = args.inference_size[i-1]
-            self.inference_w.append(tf.get_variable("inference_w"+str(i), [prev_size, args.inference_size[i]], 
+            self.inference_w.append(tf.Variable("inference_w"+str(i), [prev_size, args.inference_size[i]], 
                                                 regularizer=tf.contrib.layers.l2_regularizer(args.reg_weight)))
-            self.inference_b.append(tf.get_variable("inference_b"+str(i), [args.inference_size[i]]))
+            self.inference_b.append(tf.Variable("inference_b"+str(i), [args.inference_size[i]]))
 
         # Last set of weights to map to output
-        self.inference_w.append(tf.get_variable("inference_w_end", [args.inference_size[-1], 2*args.noise_dim], 
+        self.inference_w.append(tf.Variable("inference_w_end", [args.inference_size[-1], 2*args.noise_dim], 
                                                 regularizer=tf.contrib.layers.l2_regularizer(args.reg_weight)))
-        self.inference_b.append(tf.get_variable("inference_b_end", [2*args.noise_dim]))
+        self.inference_b.append(tf.Variable("inference_b_end", [2*args.noise_dim]))
 
     # Function to get weights for transition matrices
     def _get_weights(self, z, u):
@@ -243,14 +243,14 @@ class BayesFilter():
                 prev_size = args.code_dim
             else:
                 prev_size = args.extractor_size[i+1]
-            self.decoder_w.append(tf.get_variable("decoder_w"+str(len(args.extractor_size)-i), [prev_size, args.extractor_size[i]], 
+            self.decoder_w.append(tf.Variable("decoder_w"+str(len(args.extractor_size)-i), [prev_size, args.extractor_size[i]], 
                                                 regularizer=tf.contrib.layers.l2_regularizer(args.reg_weight)))
-            self.decoder_b.append(tf.get_variable("decoder_b"+str(len(args.extractor_size)-i), [args.extractor_size[i]]))
+            self.decoder_b.append(tf.Variable("decoder_b"+str(len(args.extractor_size)-i), [args.extractor_size[i]]))
 
         # Last set of weights to map to output
-        self.decoder_w.append(tf.get_variable("decoder_w_end", [args.extractor_size[0], args.state_dim], 
+        self.decoder_w.append(tf.Variable("decoder_w_end", [args.extractor_size[0], args.state_dim], 
                                                 regularizer=tf.contrib.layers.l2_regularizer(args.reg_weight)))
-        self.decoder_b.append(tf.get_variable("decoder_b_end", [args.state_dim]))
+        self.decoder_b.append(tf.Variable("decoder_b_end", [args.state_dim]))
 
     # Function to run inputs through decoder
     def _get_decoder_output(self, args, encodings):
