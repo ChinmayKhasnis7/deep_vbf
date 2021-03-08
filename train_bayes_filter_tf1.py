@@ -7,7 +7,7 @@ import h5py
 import tensorflow as tf
 import numpy as np
 import time
-from bayes_filter import BayesFilter
+from bayes_filter_1 import BayesFilter
 from replay_memory import ReplayMemory
 import random
 from utils import visualize_predictions
