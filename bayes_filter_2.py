@@ -295,5 +295,3 @@ class BayesFilter():
         self.train = optimizer.apply_gradients(zip(self.grads, tf.compat.v1.trainable_variables()))
 
 
-
-
