@@ -7,7 +7,7 @@ import h5py
 import tensorflow as tf
 import numpy as np
 import time
-from bayes_filter import BayesFilter
+from bayes_filter_2 import BayesFilter
 from replay_memory import ReplayMemory
 import random
 from utils import visualize_predictions
@@ -81,10 +81,10 @@ def main():
 # Train network
 def train(args, net, env):
     # Begin tf session
-    with tf.Session() as sess:
+    with tf.compat.v1.Session() as sess:
         # Initialize variables
-        tf.global_variables_initializer().run()
-        saver = tf.train.Saver(tf.global_variables(), max_to_keep=5)
+        tf.compat.v1.global_variables_initializer().run()
+        saver = tf.compat.v1.train.Saver(tf.compat.v1.global_variables(), max_to_keep=5)
 
         # load from previous save
         if len(args.ckpt_name) > 0:
@@ -99,10 +99,10 @@ def train(args, net, env):
         replay_memory = ReplayMemory(args, shift, scale, shift_u, scale_u, env, net, sess)
         
         # Store normalization parameters
-        sess.run(tf.assign(net.shift, replay_memory.shift_x))
-        sess.run(tf.assign(net.scale, replay_memory.scale_x))
-        sess.run(tf.assign(net.shift_u, replay_memory.shift_u))
-        sess.run(tf.assign(net.scale_u, replay_memory.scale_u))
+        sess.run(tf.compat.v1.assign(net.shift, replay_memory.shift_x))
+        sess.run(tf.compat.v1.assign(net.scale, replay_memory.scale_x))
+        sess.run(tf.compat.v1.assign(net.shift_u, replay_memory.shift_u))
+        sess.run(tf.compat.v1.assign(net.scale_u, replay_memory.scale_u))
 
         #Function to evaluate loss on validation set
         def val_loss(kl_weight):
@@ -213,7 +213,7 @@ def train(args, net, env):
                 decay_epochs.append(e)
                 if len(decay_epochs) >= 3 and np.sum(np.diff(decay_epochs)[-2:]) == 2: break
                 print('setting learning rate to ', args.learning_rate * (args.decay_rate ** count_decay))
-                sess.run(tf.assign(net.learning_rate, args.learning_rate * (args.decay_rate ** count_decay)))
+                sess.run(tf.compat.v1.assign(net.learning_rate, args.learning_rate * (args.decay_rate ** count_decay)))
                 if args.learning_rate * (args.decay_rate ** count_decay) < 1e-5: break
             print('learning rate is set to ', args.learning_rate * (args.decay_rate ** count_decay))
             old_score = score
