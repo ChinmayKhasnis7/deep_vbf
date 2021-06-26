@@ -1,5 +1,5 @@
 # Deep_vbf
-Implementation of Deep Variational Bayes Filter
+Tensorflow Implementation of Deep Variational Bayes Filter
 paper: https://arxiv.org/pdf/1605.06432.pdf
 
 Tensorflow 2.x  
